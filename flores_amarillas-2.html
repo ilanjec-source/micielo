@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flores Amarillas para mi Niña</title>
+    
+    <!-- Cargando Tailwind CSS para los estilos base -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Cargando fuentes de Google (Dancing Script para lo romántico, Poppins para lectura) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff9c4 0%, #ffe082 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Estilo tipo vidrio (Glassmorphism) para las tarjetas */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(250, 190, 40, 0.2);
+        }
+
+        /* Animación para los pétalos cayendo */
+        .petal {
+            position: absolute;
+            background-color: #ffd54f;
+            border-radius: 150% 0 150% 0;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 0;
+            animation: fall linear forwards;
+            box-shadow: inset 0 0 10px rgba(230, 160, 0, 0.4);
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Animación para hacer florecer los girasoles del fondo */
+        .flower-bloom {
+            position: absolute;
+            bottom: -20px;
+            transform-origin: bottom center;
+            animation: grow 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 10;
+            opacity: 0;
+        }
+
+        @keyframes grow {
+            0% {
+                transform: scale(0) rotate(-15deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Animación de latido para el botón */
+        .pulse-button {
+            animation: pulse-soft 2s infinite;
+        }
+
+        @keyframes pulse-soft {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        /* Transiciones suaves para ocultar/mostrar elementos */
+        .fade-transition {
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+        
+        .hidden-initial {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+        }
+        
+        .visible-final {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
+        }
+
+        /* Animación suave para la tarjeta inicial */
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-bouquet {
+            animation: gentle-float 5s ease-in-out infinite;
+            transform-origin: center bottom;
+        }
+
+        @keyframes gentle-float {
+            0% { transform: translateY(0px) rotate(0deg) scale(1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+            50% { transform: translateY(-15px) rotate(1.5deg) scale(1.02); filter: drop-shadow(0 20px 25px rgba(250, 190, 40, 0.3)); }
+            100% { transform: translateY(0px) rotate(0deg) scale(1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
+
+    <!-- Contenedor donde se inyectarán las flores SVG -->
+    <div id="flower-garden" class="fixed bottom-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
+
+    <!-- Contenedor principal interactivo -->
+    <main class="z-20 w-full max-w-2xl text-center">
+        
+        <!-- Tarjeta de introducción (Floricienta quote) -->
+        <div id="intro-card" class="glass-card rounded-3xl p-8 sm:p-12 float-anim fade-transition visible-final">
+            <div class="text-yellow-500 mb-6 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flower-2"><path d="M12 7.5a4.5 4.5 0 1 1 4.5 4.5M12 7.5A4.5 4.5 0 1 0 7.5 12M12 7.5V9m-4.5 3a4.5 4.5 0 1 0 4.5 4.5M7.5 12H9m7.5 0a4.5 4.5 0 1 1-4.5 4.5m4.5-4.5H15m-3 4.5V15"/></svg>
+            </div>
+            
+            <h1 class="font-cursive text-4xl sm:text-5xl text-yellow-800 mb-6 leading-tight">
+                "Ella sabía que él sabía que algún día pasaría..."
+            </h1>
+            <p class="text-gray-700 text-lg sm:text-xl mb-10 italic">
+                Que vendría a buscarla, con sus flores amarillas 🌻
+            </p>
+            
+            <button id="main-btn" class="pulse-button bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-4 px-10 rounded-full text-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto gap-2">
+                Para mi Niña
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Tarjeta del mensaje de amor (oculta al inicio) -->
+        <div id="love-note" class="glass-card rounded-3xl p-8 sm:p-12 fade-transition hidden-initial">
+            <h2 class="font-cursive text-5xl text-yellow-700 mb-6">Si es imporante para ti, es importante para mi 💛</h2>
+            
+            <div class="text-gray-800 text-left space-y-4 text-lg sm:text-xl leading-relaxed bg-white/40 p-6 rounded-2xl border border-yellow-200 shadow-inner">
+                <p>
+                    No podía dejar pasar este día sin regalarte tus merecidas flores amarillas aunque este lejos de ti. 
+                </p>
+                <p>
+                     You are the moonlight of my life,
+Every night,
+Givin' all my love to you,
+My beatin' heart belongs to you,
+I walked for miles 'til I found you.
+                </p>
+                <p class="font-semibold text-yellow-800 text-center mt-6">
+                    Te amo con todo mi corazón. ✨
+                </p>
+            </div>
+            
+            <div class="mt-8 flex flex-col items-center">
+                <!-- Botón para ver el ramo especial -->
+                <button id="go-bouquet-btn" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 py-3 px-8 rounded-full font-bold transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-md w-full sm:w-auto">
+                    Ver tu ramo💐
+                </button>
+            </div>
+
+            <button id="reset-btn" class="mt-8 text-sm text-yellow-600 hover:text-yellow-800 underline decoration-dotted transition-colors">
+            Volver a ver
+        </button>
+    </div>
+
+    <div id="bouquet-page" class="glass-card rounded-3xl p-4 sm:p-10 fade-transition hidden-initial" style="display: none;">
+        
+        <!-- Contenedor relativo para la imagen animada -->
+        <div class="relative w-full max-w-md mx-auto my-6 flex items-center justify-center">
+            
+            <!-- IMAGEN DEL RAMO ANIMADA -->
+            <!-- Referencia al archivo local. Si falla al cargar, muestra un placeholder -->
+            <img src="IMG_1253.png" 
+                 alt="Hermoso ramo de rosas amarillas y blancas" 
+                 class="w-full h-auto rounded-3xl shadow-2xl animate-bouquet border-4 border-white/60"
+                 onerror="this.src='https://placehold.co/600x800/fef3c7/ca8a04?text=Ramo+de+Rosas'">
+                 
+        </div>
+
+        <button id="back-to-note-btn" class="mt-8 bg-white border-2 border-yellow-400 text-yellow-700 hover:bg-yellow-50 hover:border-yellow-500 py-3 px-8 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-md mx-auto flex">
+            Volver a la carta 💛
+        </button>
+    </div>
+
+</main>
+
+<script>
+        // Variables globales
+        const mainBtn = document.getElementById('main-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const introCard = document.getElementById('intro-card');
+        const loveNote = document.getElementById('love-note');
+        const flowerGarden = document.getElementById('flower-garden');
+        
+        // Nuevas variables para la página del Ramo
+        const bouquetPage = document.getElementById('bouquet-page');
+        const goBouquetBtn = document.getElementById('go-bouquet-btn');
+        const backToNoteBtn = document.getElementById('back-to-note-btn');
+        
+        let petalInterval;
+
+        // Función para crear un pétalo cayendo
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            // Randomizar tamaño, posición y duración
+            const size = Math.random() * 15 + 10; // entre 10px y 25px
+            const left = Math.random() * 100; // 0% a 100vw
+            const duration = Math.random() * 3 + 3; // 3s a 6s
+            const delay = Math.random() * 2; // retraso inicial
+            
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size}px`;
+            petal.style.left = `${left}vw`;
+            petal.style.animationDuration = `${duration}s`;
+            petal.style.animationDelay = `${delay}s`;
+            
+            // Color ligeramente variado (amarillos y naranjas)
+            const colors = ['#fde047', '#facc15', '#eab308', '#fbbf24', '#f59e0b'];
+            petal.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.body.appendChild(petal);
+            
+            // Eliminar el pétalo del DOM después de que termine la animación
+            setTimeout(() => {
+                petal.remove();
+            }, (duration + delay) * 1000);
+        }
+
+        // Crear unos pocos pétalos de fondo constantes
+        function startGentlePetals() {
+            petalInterval = setInterval(() => {
+                createPetal();
+            }, 800);
+        }
+
+        // Función para una explosión de pétalos
+        function petalExplosion() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(createPetal, Math.random() * 2000);
+            }
+        }
+
+        // Función actualizada para plantar Lirios y Rosas de distintos colores
+        function plantFlowers() {
+            flowerGarden.innerHTML = ''; // Limpiar jardín
+            
+            // Número de flores basado en el ancho de la pantalla
+            const numFlowers = Math.floor(window.innerWidth / 70); 
+            
+            // Diferentes tonos de amarillo para las rosas del jardín
+            const roseColors = [
+                { outer: '#facc15', inner: '#fde047', stroke: '#ca8a04' }, // Amarillo clásico
+                { outer: '#eab308', inner: '#facc15', stroke: '#a16207' }, // Amarillo mostaza
+                { outer: '#fde047', inner: '#fef08a', stroke: '#eab308' }, // Amarillo claro
+                { outer: '#fbbf24', inner: '#fcd34d', stroke: '#b45309' }  // Amarillo dorado
+            ];
+            
+            for (let i = 0; i < numFlowers; i++) {
+                const flower = document.createElement('div');
+                flower.classList.add('flower-bloom');
+                
+                // Posición horizontal (distribuidas con aleatoriedad)
+                const leftPos = (i * (100 / numFlowers)) + (Math.random() * 5 - 2.5);
+                flower.style.left = `${leftPos}vw`;
+                
+                // Retraso en el crecimiento para efecto en cadena
+                flower.style.animationDelay = `${Math.random() * 1.5}s`;
+                
+                // Tamaño aleatorio
+                const scale = Math.random() * 0.4 + 0.8; 
+                
+                // 50% probabilidad de ser Lirio, 50% de ser Rosa
+                const isLily = Math.random() > 0.5;
+                
+                if (isLily) {
+                    // Generación del SVG de un Lirio amarillo
+                    flower.innerHTML = `
+                    <svg width="80" height="150" viewBox="0 0 100 150" style="transform: scale(${scale})">
+                        <!-- Tallo -->
+                        <path d="M50,150 Q55,100 50,50" stroke="#4ade80" stroke-width="5" fill="none" />
+                        <!-- Hojas -->
+                        <path d="M50,110 Q20,110 15,85 Q35,95 50,105 Z" fill="#22c55e" />
+                        <path d="M50,90 Q80,85 85,60 Q65,75 50,85 Z" fill="#22c55e" />
+                        <!-- Pétalos de lirio -->
+                        <path d="M50,50 Q20,10 50,-10 Q80,10 50,50 Z" fill="#fef08a" stroke="#facc15" stroke-width="1"/>
+                        <path d="M50,50 Q10,30 0,60 Q20,70 50,50 Z" fill="#fde047" stroke="#facc15" stroke-width="1"/>
+                        <path d="M50,50 Q90,30 100,60 Q80,70 50,50 Z" fill="#fde047" stroke="#facc15" stroke-width="1"/>
+                        <path d="M50,50 Q30,80 50,100 Q70,80 50,50 Z" fill="#fef08a" stroke="#facc15" stroke-width="1"/>
+                        <!-- Centro/Sombreado -->
+                        <path d="M50,50 Q10,70 15,30 Q35,40 50,50 Z" fill="#facc15" opacity="0.8"/>
+                        <path d="M50,50 Q90,70 85,30 Q65,40 50,50 Z" fill="#facc15" opacity="0.8"/>
+                        <!-- Estambres -->
+                        <line x1="50" y1="50" x2="40" y2="20" stroke="#b45309" stroke-width="2" />
+                        <circle cx="40" cy="20" r="3" fill="#78350f" />
+                        <line x1="50" y1="50" x2="60" y2="20" stroke="#b45309" stroke-width="2" />
+                        <circle cx="60" cy="20" r="3" fill="#78350f" />
+                        <line x1="50" y1="50" x2="50" y2="15" stroke="#b45309" stroke-width="2" />
+                        <circle cx="50" cy="15" r="3" fill="#78350f" />
+                    </svg>
+                    `;
+                } else {
+                    // Generación del SVG de una Rosa con color aleatorio
+                    const color = roseColors[Math.floor(Math.random() * roseColors.length)];
+                    flower.innerHTML = `
+                    <svg width="80" height="150" viewBox="0 0 100 150" style="transform: scale(${scale})">
+                        <!-- Tallo -->
+                        <path d="M50,150 Q45,100 50,50" stroke="#4ade80" stroke-width="6" fill="none" />
+                        <!-- Hojas -->
+                        <path d="M50,110 Q30,120 20,100 Q40,95 50,105 Z" fill="#16a34a" />
+                        <path d="M50,85 Q70,95 80,70 Q60,70 50,80 Z" fill="#16a34a" />
+                        <!-- Espinas -->
+                        <path d="M49,120 L42,118 L48,110 Z" fill="#15803d" />
+                        <path d="M51,95 L58,92 L51,85 Z" fill="#15803d" />
+                        
+                        <!-- Flor (Rosa) -->
+                        <g transform="translate(50, 40) scale(1.5)">
+                            <path d="M0,10 C-25,-15 25,-25 0,10" fill="${color.outer}" stroke="${color.stroke}" stroke-width="1" />
+                            <path d="M-15,0 C-15,20 15,20 15,0 C25,-15 -25,-15 -15,0" fill="${color.outer}" stroke="${color.stroke}" stroke-width="1" />
+                            <path d="M-10,-5 C-10,15 10,15 10,-5 C15,-15 -15,-15 -10,-5" fill="${color.inner}" stroke="${color.stroke}" stroke-width="1" />
+                            <path d="M-5,-5 C-5,5 5,5 5,-5 C8,-10 -8,-10 -5,-5" fill="#ffffff" opacity="0.4" />
+                        </g>
+                    </svg>
+                    `;
+                }
+                
+                flowerGarden.appendChild(flower);
+            }
+        }
+
+        // Eventos
+        mainBtn.addEventListener('click', () => {
+            // Ocultar introducción
+            introCard.classList.remove('visible-final');
+            introCard.classList.add('hidden-initial');
+            
+            setTimeout(() => {
+                introCard.style.display = 'none';
+                
+                // Mostrar nota de amor
+                loveNote.style.display = 'block';
+                // Pequeño timeout para que la transición CSS funcione después de cambiar display
+                setTimeout(() => {
+                    loveNote.classList.remove('hidden-initial');
+                    loveNote.classList.add('visible-final');
+                }, 50);
+                
+                // Efectos mágicos
+                petalExplosion();
+                plantFlowers();
+                
+                // Aumentar la cantidad de pétalos constantes
+                clearInterval(petalInterval);
+                petalInterval = setInterval(createPetal, 300);
+                
+            }, 1000); // Esperar a que termine la animación de salida
+        });
+
+        resetBtn.addEventListener('click', () => {
+            // Volver al estado inicial
+            loveNote.classList.remove('visible-final');
+            loveNote.classList.add('hidden-initial');
+            
+            setTimeout(() => {
+                loveNote.style.display = 'none';
+                introCard.style.display = 'block';
+                
+                setTimeout(() => {
+                    introCard.classList.remove('hidden-initial');
+                    introCard.classList.add('visible-final');
+                }, 50);
+                
+                // Limpiar flores y resetear ritmo de pétalos
+                flowerGarden.innerHTML = '';
+                clearInterval(petalInterval);
+                startGentlePetals();
+                
+            }, 1000);
+        });
+
+        // Eventos para la nueva página del ramo de flores
+        goBouquetBtn.addEventListener('click', () => {
+            // Ocultar nota de amor suavemente
+            loveNote.classList.remove('visible-final');
+            loveNote.classList.add('hidden-initial');
+            
+            setTimeout(() => {
+                loveNote.style.display = 'none';
+                
+                // Mostrar la tarjeta del ramo
+                bouquetPage.style.display = 'block';
+                setTimeout(() => {
+                    bouquetPage.classList.remove('hidden-initial');
+                    bouquetPage.classList.add('visible-final');
+                }, 50);
+            }, 1000);
+        });
+
+        backToNoteBtn.addEventListener('click', () => {
+            // Ocultar la tarjeta del ramo suavemente
+            bouquetPage.classList.remove('visible-final');
+            bouquetPage.classList.add('hidden-initial');
+            
+            setTimeout(() => {
+                bouquetPage.style.display = 'none';
+                
+                // Mostrar la nota de amor de nuevo
+                loveNote.style.display = 'block';
+                setTimeout(() => {
+                    loveNote.classList.remove('hidden-initial');
+                    loveNote.classList.add('visible-final');
+                }, 50);
+            }, 1000);
+        });
+
+        // Iniciar con pétalos suaves
+        window.onload = startGentlePetals;
+    </script>
+</body>
+</html>
